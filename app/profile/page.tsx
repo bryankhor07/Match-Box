@@ -190,7 +190,7 @@ export default function ProfilePage() {
                           Birthday
                         </label>
                         <p className="text-gray-900 dark:text-white">
-                          {new Date(profile.birthdate).toLocaleDateString()}
+                          {profile.birthdate}
                         </p>
                       </div>
                     </div>

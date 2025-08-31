@@ -219,7 +219,6 @@ export default function EditProfilePage() {
               </label>
               <div className="flex items-center space-x-6">
                 <div className="relative">
-                  {/* Current avatar */}
                   <div className="w-24 h-24 rounded-full overflow-hidden">
                     <img
                       src={formData.avatar_url || "/default-avatar.png"}
@@ -227,7 +226,6 @@ export default function EditProfilePage() {
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  {/* PhotoUpload handles actual file upload */}
                   <PhotoUpload
                     onPhotoUploaded={(url) => {
                       setFormData((prev) => ({
@@ -248,21 +246,239 @@ export default function EditProfilePage() {
                 </div>
               </div>
             </div>
+
             {/* Basic Information Section */}
-            {/* Full Name, Username, Gender, Birthday, Bio */}
-            {/* Future: Could add fields for interests, job, education */}
-            ...
+            <div className="mb-8">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                Basic Information
+              </h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                  <label
+                    htmlFor="full_name"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    Full Name *
+                  </label>
+                  <input
+                    type="text"
+                    id="full_name"
+                    name="full_name"
+                    value={formData.full_name}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                    placeholder="Enter your full name"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="username"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    Username *
+                  </label>
+                  <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    value={formData.username}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                    placeholder="Choose a username"
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                <div>
+                  <label
+                    htmlFor="gender"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    Gender *
+                  </label>
+                  <select
+                    id="gender"
+                    name="gender"
+                    value={formData.gender}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                  >
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="birthdate"
+                    className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                  >
+                    Birthday *
+                  </label>
+                  <input
+                    type="date"
+                    id="birthdate"
+                    name="birthdate"
+                    value={formData.birthdate}
+                    onChange={handleInputChange}
+                    required
+                    className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                  />
+                </div>
+              </div>
+
+              <div className="mb-6">
+                <label
+                  htmlFor="bio"
+                  className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+                >
+                  About Me *
+                </label>
+                <textarea
+                  id="bio"
+                  name="bio"
+                  value={formData.bio}
+                  onChange={handleInputChange}
+                  required
+                  rows={4}
+                  maxLength={500}
+                  className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent dark:bg-gray-700 dark:text-white resize-none"
+                  placeholder="Tell others about yourself..."
+                />
+                <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  {formData.bio.length}/500 characters
+                </p>
+              </div>
+            </div>
+
             {/* Dating Preferences Section */}
-            {/* Age range, max distance, gender preferences */}
-            {/* Future: Could add preferences for lifestyle, religion, etc. */}
-            ...
-            {/* Error Message (shown if save fails) */}
+            <div className="mb-8">
+              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                Dating Preferences
+              </h3>
+
+              {/* Age Range */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                  Age Range: {formData.preferences.age_range.min} -{" "}
+                  {formData.preferences.age_range.max} years
+                </label>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">
+                      Minimum Age
+                    </label>
+                    <input
+                      type="range"
+                      min="18"
+                      max="80"
+                      value={formData.preferences.age_range.min}
+                      onChange={(e) =>
+                        handleAgeRangeChange("min", parseInt(e.target.value))
+                      }
+                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+                    />
+                    <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      <span>18</span>
+                      <span>{formData.preferences.age_range.min}</span>
+                      <span>80</span>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-xs text-gray-600 dark:text-gray-400 mb-1">
+                      Maximum Age
+                    </label>
+                    <input
+                      type="range"
+                      min="18"
+                      max="80"
+                      value={formData.preferences.age_range.max}
+                      onChange={(e) =>
+                        handleAgeRangeChange("max", parseInt(e.target.value))
+                      }
+                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+                    />
+                    <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
+                      <span>18</span>
+                      <span>{formData.preferences.age_range.max}</span>
+                      <span>80</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Distance */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                  Maximum Distance: {formData.preferences.distance} km
+                </label>
+                <input
+                  type="range"
+                  min="1"
+                  max="500"
+                  value={formData.preferences.distance}
+                  onChange={(e) =>
+                    handlePreferenceChange("distance", parseInt(e.target.value))
+                  }
+                  className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700"
+                />
+                <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
+                  <span>1 km</span>
+                  <span>{formData.preferences.distance} km</span>
+                  <span>500 km</span>
+                </div>
+              </div>
+
+              {/* Gender Preference */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                  Interested in
+                </label>
+                <div className="space-y-2">
+                  {["male", "female", "other"].map((gender) => (
+                    <label
+                      key={gender}
+                      className="flex items-center space-x-3 cursor-pointer"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={formData.preferences.gender_preference.includes(
+                          gender as "male" | "female" | "other"
+                        )}
+                        onChange={() =>
+                          handleGenderPreferenceChange(
+                            gender as "male" | "female" | "other"
+                          )
+                        }
+                        className="w-4 h-4 text-pink-600 bg-gray-100 border-gray-300 rounded focus:ring-pink-500 dark:focus:ring-pink-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                      />
+                      <span className="text-sm text-gray-900 dark:text-gray-300 capitalize">
+                        {gender}
+                      </span>
+                    </label>
+                  ))}
+                </div>
+                {formData.preferences.gender_preference.length === 0 && (
+                  <p className="text-xs text-red-500 mt-1">
+                    Please select at least one gender preference
+                  </p>
+                )}
+              </div>
+            </div>
+
             {error && (
               <div className="mb-6 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
                 {error}
               </div>
             )}
-            {/* Actions: Cancel and Save */}
+
             <div className="flex items-center justify-between pt-6 border-t border-gray-200 dark:border-gray-700">
               <button
                 type="button"
