@@ -146,3 +146,81 @@ export async function likeUser(toUserId: string) {
   // Otherwise, just a one-sided like
   return { success: true, isMatch: false };
 }
+
+/**
+ * Fetches all active matches for the currently authenticated user.
+ *
+ * @returns {Promise<UserProfile[]>} - A list of user profiles that the current user has matched with.
+ * @throws {Error} - If the user is not authenticated or if fetching matches fails.
+ */
+export async function getUserMatches() {
+  // Create a Supabase client instance
+  const supabase = await createClient();
+
+  // Get the currently authenticated user
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  // If no user is logged in, throw an error
+  if (!user) {
+    throw new Error("Not authenticated.");
+  }
+
+  // Query the "matches" table for active matches involving the current user
+  const { data: matches, error } = await supabase
+    .from("matches")
+    .select("*")
+    .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`) // Match where user is either user1 or user2
+    .eq("is_active", true); // Only active matches
+
+  // Handle query error
+  if (error) {
+    throw new Error("Failed to fetch matches");
+  }
+
+  // Store the matched users' profiles
+  const matchedUsers: UserProfile[] = [];
+
+  // Loop through each match to retrieve the other user's profile
+  for (const match of matches || []) {
+    // Determine the ID of the "other" user in the match
+    const otherUserId =
+      match.user1_id === user.id ? match.user2_id : match.user1_id;
+
+    // Fetch the other user's profile from the "users" table
+    const { data: otherUser, error: userError } = await supabase
+      .from("users")
+      .select("*")
+      .eq("id", otherUserId)
+      .single();
+
+    // Skip if there was an error fetching the other user's data
+    if (userError) {
+      continue;
+    }
+
+    // Push the other user's profile into the results list
+    matchedUsers.push({
+      id: otherUser.id,
+      full_name: otherUser.full_name,
+      username: otherUser.username,
+      email: otherUser.email,
+      gender: otherUser.gender,
+      birthdate: otherUser.birthdate,
+      bio: otherUser.bio,
+      avatar_url: otherUser.avatar_url,
+      preferences: otherUser.preferences,
+      location_lat: undefined, // Placeholder (can be updated later if location data is added)
+      location_lng: undefined, // Placeholder
+      last_active: new Date().toISOString(), // Assume they're "active" at the time of fetch
+      is_verified: true, // Assume verified (can be modified to use actual field if available)
+      is_online: false, // Default value (could be updated with presence tracking)
+      created_at: match.created_at, // Use match creation timestamp
+      updated_at: match.created_at,
+    });
+  }
+
+  // Return the list of matched user profiles
+  return matchedUsers;
+}
