@@ -46,7 +46,7 @@ export default function Navbar() {
                 href="/profile"
                 className="text-white hover:text-pink-400 transition-colors"
               >
-                Messages
+                Profile
               </Link>
             </div>
           )}
