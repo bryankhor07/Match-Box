@@ -4,7 +4,7 @@ import Image from "next/image";
 export default function MatchCard({ user }: { user: UserProfile }) {
   return (
     <div className="relative w-full max-w-sm mx-auto">
-      <div className="card-swipe aspect-[3/4] overflow-hidden">
+      <div className="card-swipe aspect-[3/4] overflow-hidden shadow-slate-500">
         <div className="relative w-full h-full">
           <Image
             src={user.avatar_url}
