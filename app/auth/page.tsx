@@ -23,10 +23,10 @@ export default function AuthPage() {
   const { user, loading: authLoading } = useAuth(); // Get auth state (from context)
   const router = useRouter(); // Next.js router for navigation
 
-  // If user is already signed in, redirect them to home page.
+  // If user is already signed in, redirect them to matches page.
   useEffect(() => {
     if (user && !authLoading) {
-      router.push("/");
+      router.push("/matches");
     }
   }, [user, authLoading, router]);
 
