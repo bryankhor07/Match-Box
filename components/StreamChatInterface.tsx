@@ -64,7 +64,10 @@ export default function StreamChatInterface({
 
   // Scroll chat to bottom
   function scrollToBottom() {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    messagesEndRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "nearest",
+    });
     setShowScrollButton(false);
   }
 
@@ -317,12 +320,10 @@ export default function StreamChatInterface({
   // Show loading spinner while chat client/channel are initializing
   if (!client || !channel) {
     return (
-      <div className="flex-1 flex items-center justify-center bg-white dark:bg-gray-900">
+      <div className="flex-1 flex items-center justify-center bg-white">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">
-            Setting up chat...
-          </p>
+          <p className="mt-4 text-gray-600">Setting up chat...</p>
         </div>
       </div>
     );
@@ -330,7 +331,7 @@ export default function StreamChatInterface({
 
   // Main chat UI
   return (
-    <div className="h-full flex flex-col bg-white dark:bg-gray-900">
+    <div className="h-full flex flex-col bg-white">
       <div
         ref={messagesContainerRef}
         className="flex-1 overflow-y-auto p-4 space-y-4 scroll-smooth chat-scrollbar relative"
@@ -347,15 +348,13 @@ export default function StreamChatInterface({
               className={`max-w-xs lg:max-w-md px-4 py-2 rounded-2xl ${
                 message.sender === "me"
                   ? "bg-gradient-to-r from-pink-500 to-red-500 text-white"
-                  : "bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white"
+                  : "bg-gray-200 text-gray-900"
               }`}
             >
               <p className="text-sm">{message.text}</p>
               <p
                 className={`text-xs mt-1 ${
-                  message.sender === "me"
-                    ? "text-pink-100"
-                    : "text-gray-500 dark:text-gray-400"
+                  message.sender === "me" ? "text-pink-100" : "text-gray-500"
                 }`}
               >
                 {formatTime(message.timestamp)}
@@ -366,7 +365,7 @@ export default function StreamChatInterface({
 
         {isTyping && (
           <div className="flex justify-start">
-            <div className="bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white px-4 py-2 rounded-2xl">
+            <div className="bg-gray-200 text-gray-900 px-4 py-2 rounded-2xl">
               <div className="flex space-x-1">
                 <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
                 <div
@@ -410,26 +409,20 @@ export default function StreamChatInterface({
       )}
 
       {/* Message Input */}
-
-      <div className="border-t border-gray-200 dark:border-gray-700 p-4">
+      <div className="border-t border-gray-200 p-4">
         <form className="flex space-x-2" onSubmit={handleSendMessage}>
           <input
             type="text"
             value={newMessage}
             onChange={(e) => {
               setNewMessage(e.target.value);
-
               if (channel && e.target.value.length > 0) {
                 channel.keystroke();
               }
             }}
-            onFocus={(e) => {
-              if (channel) {
-                channel.keystroke();
-              }
-            }}
+            onFocus={() => channel?.keystroke()}
             placeholder="Type a message..."
-            className="flex-1 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-full focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent dark:bg-gray-800 dark:text-white"
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent bg-white text-gray-900"
             disabled={!channel}
           />
 
@@ -457,7 +450,7 @@ export default function StreamChatInterface({
 
       {showIncomingCall && (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 max-w-sm mx-4 shadow-2xl">
+          <div className="bg-white rounded-2xl p-8 max-w-sm mx-4 shadow-2xl">
             <div className="text-center">
               <div className="w-20 h-20 rounded-full overflow-hidden mx-auto mb-4 border-4 border-pink-500">
                 <img
@@ -466,12 +459,10 @@ export default function StreamChatInterface({
                   className="w-full h-full object-cover"
                 />
               </div>
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">
                 Incoming Video Call
               </h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-6">
-                {callerName} is calling you
-              </p>
+              <p className="text-gray-600 mb-6">{callerName} is calling you</p>
               <div className="flex space-x-4">
                 <button
                   onClick={handleDeclineCall}

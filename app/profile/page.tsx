@@ -78,13 +78,11 @@ export default function ProfilePage() {
   // ----------------------
   if (loading) {
     return (
-      <div className="min-h-screen ... flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-red-50 flex items-center justify-center">
         <div className="text-center">
           {/* Spinner animation */}
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-pink-500 mx-auto"></div>
-          <p className="mt-4 text-gray-600 dark:text-gray-400">
-            Loading your profile...
-          </p>
+          <p className="mt-4 text-gray-600">Loading your profile...</p>
         </div>
       </div>
     );
@@ -95,21 +93,21 @@ export default function ProfilePage() {
   // ----------------------
   if (error || !profile) {
     return (
-      <div className="min-h-screen ... flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-pink-50 to-red-50 flex items-center justify-center">
         <div className="text-center max-w-md mx-auto p-8">
           {/* Error icon */}
-          <div className="w-24 h-24 ... mx-auto mb-6">
+          <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <span className="text-4xl">❌</span>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
             Profile not found
           </h2>
-          <p className="text-gray-600 dark:text-gray-400 mb-6">
+          <p className="text-gray-600 mb-6">
             {error || "Unable to load your profile. Please try again."}
           </p>
           <button
             onClick={() => window.location.reload()}
-            className="bg-gradient-to-r from-pink-500 to-red-500 ..."
+            className="bg-gradient-to-r from-pink-500 to-red-500 text-white font-semibold py-3 px-6 rounded-full hover:from-pink-600 hover:to-red-600 transition-all duration-200"
           >
             Retry
           </button>
@@ -122,21 +120,18 @@ export default function ProfilePage() {
   // Profile Display UI
   // ----------------------
   return (
-    <div className="bg-gradient-to-br from-pink-50 to-red-50 dark:from-gray-900 dark:to-gray-800">
+    <div className="bg-gradient-to-br from-pink-50 to-red-50 min-h-screen">
       <div className="container mx-auto px-4 py-8">
         <header className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            My Profile
-          </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Manage your profile and preferences
-          </p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">My Profile</h1>
+          <p className="text-gray-600">Manage your profile and preferences</p>
         </header>
 
         <div className="max-w-4xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            {/* Left: Profile Info */}
             <div className="lg:col-span-2">
-              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-8">
+              <div className="bg-white rounded-2xl shadow-lg p-8">
                 <div className="flex items-center space-x-6 mb-8">
                   <div className="relative">
                     <div className="w-24 h-24 rounded-full overflow-hidden">
@@ -149,13 +144,11 @@ export default function ProfilePage() {
                   </div>
 
                   <div className="flex-1">
-                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+                    <h2 className="text-2xl font-bold text-gray-900 mb-1">
                       {profile.full_name}, {calculateAge(profile.birthdate)}
                     </h2>
-                    <p className="text-gray-600 dark:text-gray-400 mb-2">
-                      @{profile.username}
-                    </p>
-                    <p className="text-sm text-gray-500 dark:text-gray-500">
+                    <p className="text-gray-600 mb-2">@{profile.username}</p>
+                    <p className="text-sm text-gray-500">
                       Member since{" "}
                       {new Date(profile.created_at).toLocaleDateString()}
                     </p>
@@ -163,66 +156,67 @@ export default function ProfilePage() {
                 </div>
 
                 <div className="space-y-6">
+                  {/* About Me */}
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-3">
                       About Me
                     </h3>
-                    <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
+                    <p className="text-gray-600 leading-relaxed">
                       {profile.bio || "No bio added yet."}
                     </p>
                   </div>
 
+                  {/* Basic Information */}
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-3">
                       Basic Information
                     </h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
                           Gender
                         </label>
-                        <p className="text-gray-900 dark:text-white capitalize">
+                        <p className="text-gray-900 capitalize">
                           {profile.gender}
                         </p>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
                           Birthday
                         </label>
-                        <p className="text-gray-900 dark:text-white">
-                          {profile.birthdate}
-                        </p>
+                        <p className="text-gray-900">{profile.birthdate}</p>
                       </div>
                     </div>
                   </div>
 
+                  {/* Preferences */}
                   <div>
-                    <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-3">
                       Dating Preferences
                     </h3>
                     <div className="grid grid-cols-2 gap-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
                           Age Range
                         </label>
-                        <p className="text-gray-900 dark:text-white">
+                        <p className="text-gray-900">
                           {profile.preferences.age_range.min} -{" "}
                           {profile.preferences.age_range.max} years
                         </p>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
                           Distance
                         </label>
-                        <p className="text-gray-900 dark:text-white">
+                        <p className="text-gray-900">
                           Up to {profile.preferences.distance} km
                         </p>
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
                           Gender
                         </label>
-                        <p className="text-gray-900 dark:text-white capitalize">
+                        <p className="text-gray-900 capitalize">
                           {profile.preferences.gender_preference}
                         </p>
                       </div>
@@ -232,15 +226,16 @@ export default function ProfilePage() {
               </div>
             </div>
 
+            {/* Right: Quick Actions + Account */}
             <div className="space-y-6">
-              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              <div className="bg-white rounded-2xl shadow-lg p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
                   Quick Actions
                 </h3>
                 <div className="space-y-3">
                   <Link
                     href="/profile/edit"
-                    className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200"
+                    className="flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-colors duration-200"
                   >
                     <div className="flex items-center space-x-3">
                       <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
@@ -258,9 +253,7 @@ export default function ProfilePage() {
                           />
                         </svg>
                       </div>
-                      <span className="text-gray-900 dark:text-white">
-                        Edit Profile
-                      </span>
+                      <span className="text-gray-900">Edit Profile</span>
                     </div>
                     <svg
                       className="w-5 h-5 text-gray-400"
@@ -279,18 +272,14 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+              <div className="bg-white rounded-2xl shadow-lg p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">
                   Account
                 </h3>
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50 dark:bg-gray-700">
-                    <span className="text-gray-900 dark:text-white">
-                      Username
-                    </span>
-                    <span className="text-gray-500 dark:text-gray-400">
-                      @{profile.username}
-                    </span>
+                  <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50">
+                    <span className="text-gray-900">Username</span>
+                    <span className="text-gray-500">@{profile.username}</span>
                   </div>
                 </div>
               </div>

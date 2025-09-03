@@ -3,10 +3,19 @@
 import React, { useState, useEffect } from "react";
 import { Heart, MessageCircle, Video, Users } from "lucide-react";
 import { useRouter } from "next/navigation"; // Router for redirects
+import { useAuth } from "@/contexts/auth-context";
 
 export default function Home() {
   const [currentTestimonial, setCurrentTestimonial] = useState(0);
   const router = useRouter(); // Next.js router for navigation
+  const { user, loading: authLoading } = useAuth();
+
+  // If user is already signed in, redirect them to matches page.
+  useEffect(() => {
+    if (user && !authLoading) {
+      router.push("/matches");
+    }
+  }, [user, authLoading, router]);
 
   const testimonials = [
     {
