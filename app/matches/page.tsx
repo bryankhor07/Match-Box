@@ -60,20 +60,20 @@ export default function MatchesPage() {
 
   // Handle "Pass" button click (skip profile)
   function handlePass() {
-    if (currentIndex < potentialMatches.length - 1) {
+    if (currentIndex < potentialMatches.length) {
       setCurrentIndex((prev) => prev + 1);
     }
   }
 
   // Close match notification popup
   function handleCloseMatchNotification() {
-    // setShowMatchNotification(false);
-    // setMatchedUser(null);
+    setShowMatchNotification(false);
+    setMatchedUser(null);
   }
 
-  // Start chat with matched user (to be implemented)
+  // Start chat with matched user
   function handleStartChat() {
-    // console.log("Start chat with:", matchedUser);
+    router.push("/chat");
   }
 
   // If no more profiles left
