@@ -10,6 +10,7 @@ import { createClient } from "../supabase/server";
  * - Grabs the current user from Supabase auth
  * - Fetches up to 50 other users (excluding the current user)
  * - Filters them based on the current user's gender preferences
+ * - Exclude matched users
  * - Maps them into the `UserProfile` format used by the frontend
  */
 export async function getPotentialMatches(): Promise<UserProfile[]> {
@@ -21,8 +22,26 @@ export async function getPotentialMatches(): Promise<UserProfile[]> {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    throw new Error("Not authenticated."); // User must be logged in
+    throw new Error("Not authenticated.");
   }
+
+  // Get all active matches for the current user
+  const { data: matches, error: matchError } = await supabase
+    .from("matches")
+    .select("*")
+    .or(`user1_id.eq.${user.id},user2_id.eq.${user.id}`)
+    .eq("is_active", true);
+
+  if (matchError) {
+    throw new Error("Failed to fetch matches");
+  }
+
+  // Collect IDs of users already matched with the current user
+  const matchedUserIds = new Set(
+    (matches || []).map((m) =>
+      m.user1_id === user.id ? m.user2_id : m.user1_id
+    )
+  );
 
   // Fetch up to 50 users, excluding the current user
   const { data: potentialMatches, error } = await supabase
@@ -35,7 +54,7 @@ export async function getPotentialMatches(): Promise<UserProfile[]> {
     throw new Error("Failed to fetch potential matches");
   }
 
-  // Fetch the current user's preferences (e.g. gender preference)
+  // Fetch the current user's preferences
   const { data: userPrefs, error: prefsError } = await supabase
     .from("users")
     .select("preferences")
@@ -46,21 +65,22 @@ export async function getPotentialMatches(): Promise<UserProfile[]> {
     throw new Error("Failed to get user preferences");
   }
 
-  // Extract the gender preference array (if set)
   const currentUserPrefs = userPrefs.preferences as any;
   const genderPreference = currentUserPrefs?.gender_preference || [];
 
-  // Filter potential matches based on gender preference
+  // Filter out already matched users and apply gender preference
   const filteredMatches =
     potentialMatches
       .filter((match) => {
+        // Exclude users already matched
+        if (matchedUserIds.has(match.id)) return false;
+
+        // Apply gender preference
         if (!genderPreference || genderPreference.length === 0) {
-          // If no preference set, show all
           return true;
         }
         return genderPreference.includes(match.gender);
       })
-      // Map database rows to `UserProfile` type
       .map((match) => ({
         id: match.id,
         full_name: match.full_name,
@@ -71,11 +91,11 @@ export async function getPotentialMatches(): Promise<UserProfile[]> {
         bio: match.bio,
         avatar_url: match.avatar_url,
         preferences: match.preferences,
-        location_lat: undefined, // Not implemented yet
-        location_lng: undefined, // Not implemented yet
-        last_active: new Date().toISOString(), // Fake "last active" timestamp
-        is_verified: true, // Assume verified for now
-        is_online: false, // No real-time presence implemented yet
+        location_lat: undefined,
+        location_lng: undefined,
+        last_active: new Date().toISOString(),
+        is_verified: true,
+        is_online: false,
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
       })) || [];
