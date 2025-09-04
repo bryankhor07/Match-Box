@@ -78,7 +78,7 @@ export default function Home() {
                 className="group relative px-8 py-4 bg-gradient-to-r from-pink-500 to-red-500 text-white text-lg font-semibold rounded-2xl hover:from-pink-600 hover:to-red-600 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 cursor-pointer"
                 onClick={redirectToAuthPage}
               >
-                <Heart className="inline w-5 h-5 mr-2 group-hover:animate-pulse" />
+                <Heart className="inline w-5 h-5 mr-2 -mt-1 group-hover:animate-pulse" />
                 Start Matching Now
                 <div className="absolute inset-0 bg-white/20 rounded-2xl blur-xl group-hover:blur-2xl transition-all duration-300"></div>
               </button>
@@ -330,7 +330,7 @@ export default function Home() {
             className="group px-12 py-4 bg-white text-pink-600 text-xl font-bold rounded-2xl hover:bg-gray-50 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105"
             onClick={redirectToAuthPage}
           >
-            <Heart className="inline w-6 h-6 mr-2 group-hover:animate-pulse" />
+            <Heart className="inline w-6 h-6 mr-2 -mt-1 group-hover:animate-pulse" />
             Join Free Today
             <span className="ml-2">→</span>
           </button>
