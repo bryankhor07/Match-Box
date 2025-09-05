@@ -24,8 +24,8 @@ export interface UserProfile {
   bio: string;
   avatar_url: string;
   preferences: UserPreferences; // Nested preferences object
-  location_lat?: number; // Optional: latitude for location-based features
-  location_lng?: number; // Optional: longitude
+  location_lat: number | null; // <- allow null
+  location_lng: number | null; // <- allow null
   last_active: string;
   is_verified: boolean;
   is_online: boolean;
@@ -209,7 +209,7 @@ export default function ProfilePage() {
                           Distance
                         </label>
                         <p className="text-gray-900">
-                          Up to {profile.preferences.distance} km
+                          Up to {profile.preferences.distance} mi
                         </p>
                       </div>
                       <div>
