@@ -44,6 +44,8 @@ export default function EditProfilePage() {
     gender: "male" as "male" | "female" | "other",
     birthdate: "",
     avatar_url: "",
+    location_lat: null as number | null,
+    location_lng: null as number | null,
     preferences: {
       age_range: {
         min: 18,
@@ -70,6 +72,8 @@ export default function EditProfilePage() {
             gender: profileData.gender || "male",
             birthdate: profileData.birthdate || "",
             avatar_url: profileData.avatar_url || "",
+            location_lat: profileData.location_lat || null,
+            location_lng: profileData.location_lng || null,
             preferences: {
               age_range: {
                 min: profileData.preferences?.age_range?.min || 18,
@@ -129,6 +133,29 @@ export default function EditProfilePage() {
       ...prev,
       [name]: value,
     }));
+  }
+
+  /**
+   * Detect user location using browser's geolocation API
+   */
+  function handleDetectLocation() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          setFormData((prev) => ({
+            ...prev,
+            location_lat: position.coords.latitude,
+            location_lng: position.coords.longitude,
+          }));
+        },
+        (error) => {
+          console.error("Error fetching location:", error);
+          setError("Unable to fetch location. Please allow location access.");
+        }
+      );
+    } else {
+      setError("Geolocation is not supported by your browser.");
+    }
   }
 
   /**
@@ -330,6 +357,38 @@ export default function EditProfilePage() {
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 focus:border-transparent"
                   />
                 </div>
+              </div>
+
+              {/* Location Section */}
+              <div className="mb-6">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Location
+                </label>
+                <div className="flex items-center space-x-4">
+                  <input
+                    type="text"
+                    value={
+                      formData.location_lat && formData.location_lng
+                        ? `${formData.location_lat.toFixed(
+                            4
+                          )}, ${formData.location_lng.toFixed(4)}`
+                        : ""
+                    }
+                    readOnly
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg bg-gray-100 text-gray-700"
+                    placeholder="No location set"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleDetectLocation}
+                    className="px-4 py-2 bg-pink-100 text-pink-700 rounded-lg hover:bg-pink-200 transition"
+                  >
+                    Use My Location
+                  </button>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  Your location will be used to calculate distance preferences.
+                </p>
               </div>
 
               <div className="mb-6">
