@@ -66,6 +66,8 @@ export async function updateUserProfile(profileData: Partial<UserProfile>) {
       gender: profileData.gender,
       birthdate: profileData.birthdate,
       avatar_url: profileData.avatar_url,
+      location_lat: profileData.location_lat ?? null,
+      location_lng: profileData.location_lng ?? null,
       preferences: profileData.preferences,
       updated_at: new Date().toISOString(), // Keep track of last update
     })
