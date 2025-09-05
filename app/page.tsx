@@ -230,7 +230,7 @@ export default function Home() {
                 {testimonials[currentTestimonial].image}
               </div>
               <blockquote className="text-2xl text-gray-700 mb-4 italic">
-                "{testimonials[currentTestimonial].text}"
+                &quot;{testimonials[currentTestimonial].text}&quot;
               </blockquote>
               <p className="text-lg font-semibold text-pink-600">
                 {testimonials[currentTestimonial].name}
