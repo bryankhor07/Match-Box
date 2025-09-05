@@ -3,6 +3,7 @@
 
 import { UserProfile } from "@/app/profile/page";
 import { createClient } from "../supabase/server";
+import { calculateAge } from "../helpers/calculate-age";
 // Import types and Supabase client helper
 
 /**
@@ -36,7 +37,6 @@ export async function getPotentialMatches(): Promise<UserProfile[]> {
     throw new Error("Failed to fetch matches");
   }
 
-  // Collect IDs of users already matched with the current user
   const matchedUserIds = new Set(
     (matches || []).map((m) =>
       m.user1_id === user.id ? m.user2_id : m.user1_id
@@ -57,7 +57,7 @@ export async function getPotentialMatches(): Promise<UserProfile[]> {
   // Fetch the current user's preferences
   const { data: userPrefs, error: prefsError } = await supabase
     .from("users")
-    .select("preferences")
+    .select("preferences, birthdate")
     .eq("id", user.id)
     .single();
 
@@ -67,8 +67,11 @@ export async function getPotentialMatches(): Promise<UserProfile[]> {
 
   const currentUserPrefs = userPrefs.preferences as any;
   const genderPreference = currentUserPrefs?.gender_preference || [];
+  const ageRange = currentUserPrefs?.age_range || { min: 18, max: 50 };
 
-  // Filter out already matched users and apply gender preference
+  // Current user’s age (in case you want to also enforce mutual preference)
+  const currentUserAge = calculateAge(userPrefs.birthdate);
+
   const filteredMatches =
     potentialMatches
       .filter((match) => {
@@ -76,28 +79,40 @@ export async function getPotentialMatches(): Promise<UserProfile[]> {
         if (matchedUserIds.has(match.id)) return false;
 
         // Apply gender preference
-        if (!genderPreference || genderPreference.length === 0) {
-          return true;
+        if (
+          genderPreference.length > 0 &&
+          !genderPreference.includes(match.gender)
+        ) {
+          return false;
         }
-        return genderPreference.includes(match.gender);
+
+        // Age range filtering
+        if (match.birthdate) {
+          const matchAge = calculateAge(match.birthdate);
+          if (matchAge < ageRange.min || matchAge > ageRange.max) {
+            return false;
+          }
+        }
+
+        return true;
       })
       .map((match) => ({
         id: match.id,
         full_name: match.full_name,
         username: match.username,
-        email: "", // Hide email for privacy
+        email: "",
         gender: match.gender,
         birthdate: match.birthdate,
         bio: match.bio,
         avatar_url: match.avatar_url,
         preferences: match.preferences,
-        location_lat: undefined,
-        location_lng: undefined,
-        last_active: new Date().toISOString(),
-        is_verified: true,
-        is_online: false,
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
+        location_lat: match.location_lat,
+        location_lng: match.location_lng,
+        last_active: match.last_active,
+        is_verified: match.is_verified,
+        is_online: match.is_online,
+        created_at: match.created_at,
+        updated_at: match.updated_at,
       })) || [];
 
   return filteredMatches;
