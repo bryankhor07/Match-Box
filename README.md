@@ -1,36 +1,56 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# MatchBox 🔥
 
-## Getting Started
+A modern matchmaking web application built with **Next.js**, **Supabase**, and **Stream**. MatchBox enables users to create profiles, discover potential matches, chat in real-time, and even connect through live video calls.
 
-First, run the development server:
+https://match-box-7213.vercel.app/
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 📑 Table of Contents
+- [Introduction](#introduction)
+- [Tech Stack](#tech-stack)
+- [Features](#features)
+- [Screenshots](#screenshots)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🚀 Introduction
+MatchBox is designed to connect people in meaningful ways. It provides a seamless experience with secure authentication, profile management, intelligent matching, real-time messaging, and live video calls.  
 
-## Learn More
+Built on a production-ready stack, it leverages Supabase for database and auth, Stream for real-time communication, and Next.js for a fast, scalable frontend.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 🛠️ Tech Stack
+- **Next.js (App Router)** – Hybrid SSR/SSG with server & client components  
+- **Supabase** – Postgres database, authentication, RLS, file storage & realtime features  
+- **Stream** – Real-time chat & WebRTC video/call SDK  
+- **TailwindCSS** – Utility-first styling & responsive design  
+- **TypeScript** – Strongly typed codebase for reliability  
+- **Vercel** – Hosting & serverless deployment platform  
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+---
 
-## Deploy on Vercel
+## ✨ Features
+- 🔒 **Auth** — Secure sign-up, sign-in, and session handling  
+- 🧾 **Postgres Schema** — Profiles, matches, messages, calls (RLS-ready)  
+- 👤 **Profile Page** — View & edit user profile with photos & bio  
+- 🧪 **Fake Profiles Seeder** — Seed the database for local testing  
+- ❤️ **Matching System** — Discover, like & match users  
+- 💬 **Realtime Chat** — One-to-one messaging via Stream  
+- 🎥 **Live Video Calls** — WebRTC-backed calls using Stream SDK  
+- 📱 **Responsive UI** — Mobile-first design with Tailwind  
+- ✅ **Production-ready** — Env config, deployment guide, and seeding scripts  
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📸 Screenshots
+
+<img width="1897" height="780" alt="image" src="https://github.com/user-attachments/assets/3c296f17-3fd1-449e-9ca4-ddd199812521" />
+<img width="1895" height="720" alt="image" src="https://github.com/user-attachments/assets/a8075d44-fb41-40f0-a6f1-739474aed254" />
+<img width="1899" height="863" alt="image" src="https://github.com/user-attachments/assets/0c4d7fe3-d6e0-413d-a812-4b9933df6a0d" />
+<img width="1896" height="752" alt="image" src="https://github.com/user-attachments/assets/5aa468a7-b26a-445b-a7a9-e6ee3c315f25" />
+<img width="1116" height="860" alt="image" src="https://github.com/user-attachments/assets/c8a3482b-233e-401c-b592-2441eaf4d412" />
+
+
+---
