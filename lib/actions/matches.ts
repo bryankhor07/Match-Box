@@ -4,6 +4,7 @@
 import { UserProfile } from "@/app/profile/page";
 import { createClient } from "../supabase/server";
 import { calculateAge } from "../helpers/calculate-age";
+import { haversineDistance } from "../helpers/haversine-distance";
 // Import types and Supabase client helper
 
 /**
@@ -68,6 +69,7 @@ export async function getPotentialMatches(): Promise<UserProfile[]> {
   const currentUserPrefs = userPrefs.preferences as any;
   const genderPreference = currentUserPrefs?.gender_preference || [];
   const ageRange = currentUserPrefs?.age_range || { min: 18, max: 50 };
+  const distanceRange = currentUserPrefs.distanceRange || null;
 
   // Current user’s age (in case you want to also enforce mutual preference)
   const currentUserAge = calculateAge(userPrefs.birthdate);
@@ -78,7 +80,7 @@ export async function getPotentialMatches(): Promise<UserProfile[]> {
         // Exclude users already matched
         if (matchedUserIds.has(match.id)) return false;
 
-        // Apply gender preference
+        // Gender preference filtering
         if (
           genderPreference.length > 0 &&
           !genderPreference.includes(match.gender)
@@ -90,6 +92,25 @@ export async function getPotentialMatches(): Promise<UserProfile[]> {
         if (match.birthdate) {
           const matchAge = calculateAge(match.birthdate);
           if (matchAge < ageRange.min || matchAge > ageRange.max) {
+            return false;
+          }
+        }
+
+        // Distance range filtering
+        if (
+          match.location_lat &&
+          match.location_lng &&
+          currentUserPrefs.location_lat &&
+          currentUserPrefs.location_lng
+        ) {
+          const distance = haversineDistance(
+            currentUserPrefs.location_lat,
+            currentUserPrefs.location_lng,
+            match.location_lat,
+            match.location_lng
+          );
+
+          if (distance > distanceRange) {
             return false;
           }
         }
@@ -246,8 +267,8 @@ export async function getUserMatches() {
       bio: otherUser.bio,
       avatar_url: otherUser.avatar_url,
       preferences: otherUser.preferences,
-      location_lat: undefined, // Placeholder (can be updated later if location data is added)
-      location_lng: undefined, // Placeholder
+      location_lat: otherUser.location_lat, // Placeholder (can be updated later if location data is added)
+      location_lng: otherUser.location_lng, // Placeholder
       last_active: new Date().toISOString(), // Assume they're "active" at the time of fetch
       is_verified: true, // Assume verified (can be modified to use actual field if available)
       is_online: false, // Default value (could be updated with presence tracking)
