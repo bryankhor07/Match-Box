@@ -415,7 +415,7 @@ export default function EditProfilePage() {
               {/* Distance */}
               <div className="mb-6">
                 <label className="block text-sm font-medium text-gray-700 mb-3">
-                  Maximum Distance: {formData.preferences.distance} km
+                  Maximum Distance: {formData.preferences.distance} mi
                 </label>
                 <input
                   type="range"
@@ -428,9 +428,9 @@ export default function EditProfilePage() {
                   className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
                 />
                 <div className="flex justify-between text-xs text-gray-500 mt-1">
-                  <span>1 km</span>
-                  <span>{formData.preferences.distance} km</span>
-                  <span>500 km</span>
+                  <span>1 mi</span>
+                  <span>{formData.preferences.distance} mi</span>
+                  <span>500 mi</span>
                 </div>
               </div>
 
