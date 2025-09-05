@@ -219,8 +219,8 @@ export default function Home() {
               Love Stories
             </h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Real people, real connections, real happiness. Here's what our
-              users say.
+              Real people, real connections, real happiness. Here&apos;s what
+              our users say.
             </p>
           </div>
 
@@ -290,13 +290,14 @@ export default function Home() {
                       </div>
                       <div className="bg-pink-50 p-3 rounded-lg">
                         <p className="text-sm text-gray-700">
-                          "Hey! I saw you love hiking too. Want to explore the
-                          trails this weekend?"
+                          &quot;Hey! I saw you love hiking too. Want to explore
+                          the trails this weekend?&quot;
                         </p>
                       </div>
                       <div className="bg-blue-50 p-3 rounded-lg">
                         <p className="text-sm text-gray-700">
-                          "That sounds amazing! I know the perfect spot..."
+                          &quot;That sounds amazing! I know the perfect
+                          spot...&quot;
                         </p>
                       </div>
                     </div>

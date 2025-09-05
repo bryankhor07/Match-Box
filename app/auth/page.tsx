@@ -63,9 +63,12 @@ export default function AuthPage() {
 
         if (error) throw error;
       }
-    } catch (error: any) {
-      // Show Supabase error message (e.g., "Invalid login credentials")
-      setError(error.message);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("An unexpected error occurred");
+      }
     } finally {
       setLoading(false); // Reset loading state
     }
