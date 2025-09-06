@@ -60,7 +60,7 @@ export default function Navbar() {
               <>
                 <button
                   onClick={signOut}
-                  className="bg-gradient-to-r from-pink-500 to-red-500 text-white font-semibold py-2 px-4 rounded-2xl hover:from-pink-600 hover:to-red-600 transition-all duration-200"
+                  className="bg-gradient-to-r from-pink-500 to-red-500 text-white font-semibold py-2 px-4 rounded-2xl hover:from-pink-600 hover:to-red-600 transition-all duration-200 cursor-pointer"
                 >
                   Sign Out
                 </button>
@@ -134,20 +134,20 @@ export default function Navbar() {
               </button>
             </>
           ) : (
-            <>
+            <div className="flex mt-2 gap-2">
               <Link
                 href="/auth"
-                className="block text-white hover:text-pink-400"
+                className="w-fit bg-gradient-to-r from-pink-500 to-red-500 text-white font-semibold py-2 px-4 rounded-2xl hover:from-pink-600 hover:to-red-600 transition-all duration-200"
               >
                 Sign In
               </Link>
               <Link
                 href="/auth"
-                className="block text-white hover:text-pink-400"
+                className="w-fit bg-gradient-to-r from-pink-500 to-red-500 text-white font-semibold py-2 px-4 rounded-2xl hover:from-pink-600 hover:to-red-600 transition-all duration-200"
               >
                 Sign Up
               </Link>
-            </>
+            </div>
           )}
         </div>
       )}

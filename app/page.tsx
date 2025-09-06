@@ -328,7 +328,7 @@ export default function Home() {
           </p>
 
           <button
-            className="group px-12 py-4 bg-white text-pink-600 text-xl font-bold rounded-2xl hover:bg-gray-50 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105"
+            className="group px-12 py-4 bg-white text-pink-600 text-xl font-bold rounded-2xl hover:bg-gray-50 transition-all duration-300 shadow-xl hover:shadow-2xl transform hover:scale-105 cursor-pointer"
             onClick={redirectToAuthPage}
           >
             <Heart className="inline w-6 h-6 mr-2 -mt-1 group-hover:animate-pulse" />

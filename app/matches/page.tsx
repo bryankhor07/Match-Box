@@ -152,7 +152,7 @@ export default function MatchesPage() {
                   setLoading(false);
                 });
               }}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors cursor-pointer ${
                 strictMode
                   ? "bg-pink-500 text-white hover:bg-pink-600"
                   : "bg-gray-200 text-gray-700 hover:bg-gray-300"
