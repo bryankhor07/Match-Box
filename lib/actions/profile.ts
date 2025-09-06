@@ -74,7 +74,6 @@ export async function updateUserProfile(profileData: Partial<UserProfile>) {
     .eq("id", user.id); // Only update this logged-in user's row
 
   if (error) {
-    console.log(error);
     return { success: false, error: error.message };
   }
 
