@@ -11,11 +11,13 @@ import { haversineDistance } from "../helpers/haversine-distance";
  * Fetch potential matches for the currently logged-in user.
  * - Grabs the current user from Supabase auth
  * - Fetches up to 50 other users (excluding the current user)
- * - Filters them based on the current user's gender preferences
+ * - Filters them based on the current user's gender preferences, age range, and distance range
  * - Exclude matched users
  * - Maps them into the `UserProfile` format used by the frontend
  */
-export async function getPotentialMatches(): Promise<UserProfile[]> {
+export async function getPotentialMatches(
+  strictMode: boolean
+): Promise<UserProfile[]> {
   const supabase = await createClient();
 
   // Get the currently logged-in user
@@ -58,7 +60,7 @@ export async function getPotentialMatches(): Promise<UserProfile[]> {
   // Fetch the current user's preferences
   const { data: userPrefs, error: prefsError } = await supabase
     .from("users")
-    .select("preferences, birthdate, location_lat, location_lng")
+    .select("preferences, birthdate, location_lat, location_lng, gender")
     .eq("id", user.id)
     .single();
 
@@ -73,71 +75,83 @@ export async function getPotentialMatches(): Promise<UserProfile[]> {
 
   const currentUserLat = userPrefs.location_lat;
   const currentUserLng = userPrefs.location_lng;
+  const currentUserGender = userPrefs.gender;
 
   // Current user’s age (in case you want to also enforce mutual preference)
   const currentUserAge = calculateAge(userPrefs.birthdate);
 
-  const filteredMatches =
-    potentialMatches
-      .filter((match) => {
-        // Exclude users already matched
-        if (matchedUserIds.has(match.id)) return false;
+  const filteredMatches = potentialMatches
+    .filter((match) => {
+      if (matchedUserIds.has(match.id)) return false;
 
-        // Gender preference filtering
-        if (
-          genderPreference.length > 0 &&
-          !genderPreference.includes(match.gender)
-        ) {
-          return false;
-        }
+      const matchAge = match.birthdate ? calculateAge(match.birthdate) : null;
+      const matchPrefs = match.preferences as any;
 
-        // Age range filtering
-        if (match.birthdate) {
-          const matchAge = calculateAge(match.birthdate);
-          if (matchAge < ageRange.min || matchAge > ageRange.max) {
-            return false;
-          }
-        }
+      // ✅ Current user preferences
+      const genderOk =
+        genderPreference.length === 0 ||
+        genderPreference.includes(match.gender);
+      const ageOk =
+        matchAge !== null &&
+        matchAge >= ageRange.min &&
+        matchAge <= ageRange.max;
+      const distanceOk =
+        match.location_lat &&
+        match.location_lng &&
+        currentUserLat &&
+        currentUserLng &&
+        distanceRange
+          ? haversineDistance(
+              currentUserLat,
+              currentUserLng,
+              match.location_lat,
+              match.location_lng
+            ) <= distanceRange
+          : true;
 
-        // Distance range filtering
-        if (
-          match.location_lat &&
-          match.location_lng &&
-          currentUserLat &&
-          currentUserLng &&
-          distanceRange
-        ) {
-          const distance = haversineDistance(
-            currentUserLat,
-            currentUserLng,
-            match.location_lat,
-            match.location_lng
-          );
+      // ✅ Mutual preference check (other user’s view of current user)
+      const currentUserOkForThem = (() => {
+        if (!matchPrefs) return true;
 
-          if (distance > distanceRange) return false;
-        }
+        const theirGenderOk =
+          !matchPrefs.gender_preference?.length ||
+          matchPrefs.gender_preference.includes(currentUserGender);
 
-        return true;
-      })
-      .map((match) => ({
-        id: match.id,
-        full_name: match.full_name,
-        username: match.username,
-        email: "",
-        gender: match.gender,
-        birthdate: match.birthdate,
-        bio: match.bio,
-        avatar_url: match.avatar_url,
-        preferences: match.preferences,
-        location_lat: match.location_lat,
-        location_lng: match.location_lng,
-        last_active: match.last_active,
-        is_verified: match.is_verified,
-        is_online: match.is_online,
-        created_at: match.created_at,
-        updated_at: match.updated_at,
-      })) || [];
+        const theirAgeRange = matchPrefs.age_range || { min: 18, max: 50 };
+        const ageOkForThem =
+          currentUserAge >= theirAgeRange.min &&
+          currentUserAge <= theirAgeRange.max;
 
+        return theirGenderOk && ageOkForThem;
+      })();
+
+      // 🔑 Decide filtering based on strictMode
+      if (strictMode) {
+        // Must satisfy ALL
+        return genderOk && ageOk && distanceOk && currentUserOkForThem;
+      } else {
+        // Show if at least ONE matches
+        return genderOk || ageOk || distanceOk;
+      }
+    })
+    .map((match) => ({
+      id: match.id,
+      full_name: match.full_name,
+      username: match.username,
+      email: "",
+      gender: match.gender,
+      birthdate: match.birthdate,
+      bio: match.bio,
+      avatar_url: match.avatar_url,
+      preferences: match.preferences,
+      location_lat: match.location_lat,
+      location_lng: match.location_lng,
+      last_active: match.last_active,
+      is_verified: match.is_verified,
+      is_online: match.is_online,
+      created_at: match.created_at,
+      updated_at: match.updated_at,
+    }));
   return filteredMatches;
 }
 
