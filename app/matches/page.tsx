@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import MatchCard from "@/components/MatchCard";
 import MatchButtons from "@/components/MatchButtons";
 import MatchNotification from "@/components/MatchNotifications";
+import { HelpCircle } from "lucide-react";
 
 export default function MatchesPage() {
   // State for storing potential matches retrieved from backend
@@ -19,11 +20,14 @@ export default function MatchesPage() {
   const [showMatchNotification, setShowMatchNotification] = useState(false);
   const [matchedUser, setMatchedUser] = useState<UserProfile | null>(null);
 
+  // User can toggle between strict or relaxed mode for potential matches
+  const [strictMode, setStrictMode] = useState(true);
+
   // Fetch potential matches when component mounts
   useEffect(() => {
     async function loadUsers() {
       try {
-        const potentialMatchesData = await getPotentialMatches();
+        const potentialMatchesData = await getPotentialMatches(strictMode);
         setPotentialMatches(potentialMatchesData);
       } catch (error) {
         console.error(error);
@@ -133,6 +137,44 @@ export default function MatchesPage() {
             <p className="text-gray-600">
               {currentIndex + 1} of {potentialMatches.length} profiles
             </p>
+          </div>
+          {/* Strict/Relaxed toggle */}
+          <div className="mt-4 relative flex justify-center">
+            {/* Centered button */}
+            <button
+              onClick={() => {
+                const newMode = !strictMode;
+                setStrictMode(newMode);
+                setLoading(true);
+                getPotentialMatches(newMode).then((data) => {
+                  setPotentialMatches(data);
+                  setCurrentIndex(0); // reset index when refetching
+                  setLoading(false);
+                });
+              }}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                strictMode
+                  ? "bg-pink-500 text-white hover:bg-pink-600"
+                  : "bg-gray-200 text-gray-700 hover:bg-gray-300"
+              }`}
+            >
+              {strictMode ? "Disable Strict Matches" : "Enable Strict Matches"}
+            </button>
+
+            {/* Icon positioned absolutely to the right of the button */}
+            <div
+              className="absolute left-1/2 ml-18 top-1/2 -translate-y-1/2 group"
+              style={{ transform: "translateX(calc(50% + 0.5rem))" }}
+            >
+              <HelpCircle className="w-5 h-5 text-gray-500 cursor-pointer" />
+
+              {/* Tooltip text */}
+              <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 w-56 rounded-md bg-gray-900 text-white text-xs p-2 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+                Strict mode will only show matches that meet <b>all</b> of your
+                preferences (age, distance, gender). Relaxed mode shows matches
+                that meet at least one.
+              </div>
+            </div>
           </div>
         </header>
 
