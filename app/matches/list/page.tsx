@@ -6,11 +6,22 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { calculateAge } from "@/lib/helpers/calculate-age";
+import { useAuth } from "@/contexts/auth-context"; // Custom hook for user/auth state
+import { useRouter } from "next/navigation";
 
 export default function MatchesListPage() {
   const [matches, setMatches] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+  const { user, loading: authLoading } = useAuth(); // Get auth state (from context)
+
+  // If user is not signed in, redirect them to auth page.
+  useEffect(() => {
+    if (!user && !authLoading) {
+      router.push("/auth");
+    }
+  }, [user, authLoading, router]);
 
   useEffect(() => {
     async function loadMatches() {

@@ -15,11 +15,18 @@ export default function ChatConversationPage() {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
   const params = useParams();
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const userId = params.userId as string; // Get the userId from the URL
 
   // Ref to control the chat interface (used for initiating video calls)
   const chatInterfaceRef = useRef<{ handleVideoCall: () => void } | null>(null);
+
+  // If user is not signed in, redirect them to auth page.
+  useEffect(() => {
+    if (!user && !authLoading) {
+      router.push("/auth");
+    }
+  }, [user, authLoading, router]);
 
   // Load the matched user's data when component mounts or when userId changes
   useEffect(() => {

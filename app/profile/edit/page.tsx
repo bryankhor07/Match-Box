@@ -7,6 +7,7 @@ import {
 } from "@/lib/actions/profile";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useAuth } from "@/contexts/auth-context"; // Custom hook for user/auth state
 
 /**
  * EditProfilePage Component
@@ -55,6 +56,15 @@ export default function EditProfilePage() {
       gender_preference: [] as ("male" | "female" | "other")[],
     },
   });
+
+  const { user, loading: authLoading } = useAuth(); // Get auth state (from context)
+
+  // If user is not signed in, redirect them to auth page.
+  useEffect(() => {
+    if (!user && !authLoading) {
+      router.push("/auth");
+    }
+  }, [user, authLoading, router]);
 
   /**
    * Load current profile data when component mounts

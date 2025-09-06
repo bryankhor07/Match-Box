@@ -4,6 +4,8 @@ import { getUserMatches } from "@/lib/actions/matches";
 import { useEffect, useState } from "react";
 import { UserProfile } from "../profile/page";
 import Link from "next/link";
+import { useAuth } from "@/contexts/auth-context"; // Custom hook for user/auth state
+import { useRouter } from "next/navigation";
 
 // Defines the shape of chat data for this component
 interface ChatData {
@@ -17,6 +19,16 @@ interface ChatData {
 export default function ChatPage() {
   const [chats, setChats] = useState<ChatData[]>([]); // Stores list of chats
   const [loading, setLoading] = useState(true); // Tracks loading state
+
+  const router = useRouter();
+  const { user, loading: authLoading } = useAuth(); // Get auth state (from context)
+
+  // If user is not signed in, redirect them to auth page.
+  useEffect(() => {
+    if (!user && !authLoading) {
+      router.push("/auth");
+    }
+  }, [user, authLoading, router]);
 
   // Load matches when component mounts
   useEffect(() => {

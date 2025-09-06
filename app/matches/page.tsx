@@ -8,6 +8,7 @@ import MatchCard from "@/components/MatchCard";
 import MatchButtons from "@/components/MatchButtons";
 import MatchNotification from "@/components/MatchNotifications";
 import { HelpCircle } from "lucide-react";
+import { useAuth } from "@/contexts/auth-context"; // Custom hook for user/auth state
 
 export default function MatchesPage() {
   // State for storing potential matches retrieved from backend
@@ -15,6 +16,7 @@ export default function MatchesPage() {
   const [loading, setLoading] = useState(true); // Loading indicator while fetching matches
   const [currentIndex, setCurrentIndex] = useState(0); // Index of currently displayed profile
   const router = useRouter();
+  const { user, loading: authLoading } = useAuth(); // Get auth state (from context)
 
   // State for match notification
   const [showMatchNotification, setShowMatchNotification] = useState(false);
@@ -22,6 +24,13 @@ export default function MatchesPage() {
 
   // User can toggle between strict or relaxed mode for potential matches
   const [strictMode, setStrictMode] = useState(true);
+
+  // If user is not signed in, redirect them to auth page.
+  useEffect(() => {
+    if (!user && !authLoading) {
+      router.push("/auth");
+    }
+  }, [user, authLoading, router]);
 
   // Fetch potential matches when component mounts
   useEffect(() => {

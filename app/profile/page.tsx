@@ -7,6 +7,8 @@ import { getCurrentUserProfile } from "@/lib/actions/profile";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { calculateAge } from "../../lib/helpers/calculate-age";
+import { useAuth } from "@/contexts/auth-context"; // Custom hook for user/auth state
+import { useRouter } from "next/navigation";
 // Utility function to calculate age from birthdate.
 
 // ----------------------
@@ -49,6 +51,16 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  const router = useRouter();
+  const { user, loading: authLoading } = useAuth(); // Get auth state (from context)
+
+  // If user is not signed in, redirect them to auth page.
+  useEffect(() => {
+    if (!user && !authLoading) {
+      router.push("/auth");
+    }
+  }, [user, authLoading, router]);
 
   // Fetch the current user's profile when component mounts
   useEffect(() => {
