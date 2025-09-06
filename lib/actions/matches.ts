@@ -58,7 +58,7 @@ export async function getPotentialMatches(): Promise<UserProfile[]> {
   // Fetch the current user's preferences
   const { data: userPrefs, error: prefsError } = await supabase
     .from("users")
-    .select("preferences, birthdate")
+    .select("preferences, birthdate, location_lat, location_lng")
     .eq("id", user.id)
     .single();
 
@@ -69,7 +69,10 @@ export async function getPotentialMatches(): Promise<UserProfile[]> {
   const currentUserPrefs = userPrefs.preferences as any;
   const genderPreference = currentUserPrefs?.gender_preference || [];
   const ageRange = currentUserPrefs?.age_range || { min: 18, max: 50 };
-  const distanceRange = currentUserPrefs.distanceRange || null;
+  const distanceRange = currentUserPrefs.distance || null;
+
+  const currentUserLat = userPrefs.location_lat;
+  const currentUserLng = userPrefs.location_lng;
 
   // Current user’s age (in case you want to also enforce mutual preference)
   const currentUserAge = calculateAge(userPrefs.birthdate);
@@ -100,19 +103,18 @@ export async function getPotentialMatches(): Promise<UserProfile[]> {
         if (
           match.location_lat &&
           match.location_lng &&
-          currentUserPrefs.location_lat &&
-          currentUserPrefs.location_lng
+          currentUserLat &&
+          currentUserLng &&
+          distanceRange
         ) {
           const distance = haversineDistance(
-            currentUserPrefs.location_lat,
-            currentUserPrefs.location_lng,
+            currentUserLat,
+            currentUserLng,
             match.location_lat,
             match.location_lng
           );
 
-          if (distance > distanceRange) {
-            return false;
-          }
+          if (distance > distanceRange) return false;
         }
 
         return true;
