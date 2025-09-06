@@ -31,6 +31,32 @@ export default function AuthPage() {
   }, [user, authLoading, router]);
 
   /**
+   * Gets user-friendly error message based on Supabase error
+   */
+  function getUserFriendlyError(error: any): string {
+    const message = error.message?.toLowerCase() || "";
+
+    if (message.includes("user already registered")) {
+      return "An account with this email already exists. Try signing in instead.";
+    }
+    if (message.includes("invalid login credentials")) {
+      return "Invalid email or password. Please check your credentials.";
+    }
+    if (message.includes("email not confirmed")) {
+      return "Please check your email and click the confirmation link before signing in.";
+    }
+    if (message.includes("signup is disabled")) {
+      return "Account creation is currently disabled. Please contact support.";
+    }
+    if (message.includes("password")) {
+      return "Password must be at least 6 characters long.";
+    }
+
+    // Default to original error message if no specific case matches
+    return error.message || "An unexpected error occurred";
+  }
+
+  /**
    * Handles form submission for Sign In / Sign Up.
    */
   async function handleAuth(e: React.FormEvent) {
@@ -51,7 +77,9 @@ export default function AuthPage() {
         // If user is created but session isn't active yet
         // (happens when email confirmation is required).
         if (data.user && !data.session) {
-          setError("Please check your email for a confirmation link");
+          setError(
+            "Please check your email for a confirmation link. If you don't receive one, an account with this email already exists."
+          );
           return;
         }
       } else {
@@ -64,11 +92,7 @@ export default function AuthPage() {
         if (error) throw error;
       }
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        setError(error.message);
-      } else {
-        setError("An unexpected error occurred");
-      }
+      setError(getUserFriendlyError(error));
     } finally {
       setLoading(false); // Reset loading state
     }
@@ -129,7 +153,11 @@ export default function AuthPage() {
           </div>
 
           {/* Error message */}
-          {error && <div className="text-red-600 text-sm">{error}</div>}
+          {error && (
+            <div className="text-red-600 text-sm bg-red-50 border border-red-200 rounded-lg p-3">
+              {error}
+            </div>
+          )}
 
           {/* Submit button */}
           <button
@@ -144,7 +172,10 @@ export default function AuthPage() {
         {/* Toggle between Sign In and Sign Up */}
         <div className="text-center">
           <button
-            onClick={() => setIsSignUp(!isSignUp)}
+            onClick={() => {
+              setIsSignUp(!isSignUp);
+              setError(""); // Clear error when switching modes
+            }}
             className="text-pink-600 hover:text-pink-500 text-sm cursor-pointer"
           >
             {isSignUp
