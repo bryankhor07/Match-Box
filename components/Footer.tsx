@@ -1,4 +1,5 @@
 import { Heart } from "lucide-react";
+import Link from "next/link";
 
 export default function Footer() {
   return (
@@ -30,80 +31,59 @@ export default function Footer() {
 
           <div>
             <h3 className="font-bold mb-4">Company</h3>
-            <ul className="space-y-2 text-gray-400">
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  About
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Blog
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Careers
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Contact
-                </a>
-              </li>
-            </ul>
+            <div className="space-y-2 text-gray-400 flex flex-col">
+              <Link
+                href="/about"
+                className="hover:text-white transition-colors"
+              >
+                About
+              </Link>
+              <Link href="/blog" className="hover:text-white transition-colors">
+                Blog
+              </Link>
+              <Link
+                href="/contact"
+                className="hover:text-white transition-colors"
+              >
+                Contact
+              </Link>
+            </div>
           </div>
 
           <div>
             <h3 className="font-bold mb-4">Safety</h3>
-            <ul className="space-y-2 text-gray-400">
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Safety Tips
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Community Guidelines
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Report Abuse
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Help Center
-                </a>
-              </li>
-            </ul>
+            <div className="space-y-2 text-gray-400 flex flex-col">
+              <Link
+                href="/safety-tips"
+                className="hover:text-white transition-colors"
+              >
+                Safety Tips
+              </Link>
+              <Link
+                href="/community-guidelines"
+                className="hover:text-white transition-colors"
+              >
+                Community Guidelines
+              </Link>
+            </div>
           </div>
 
           <div>
             <h3 className="font-bold mb-4">Legal</h3>
-            <ul className="space-y-2 text-gray-400">
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Terms of Service
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Privacy Policy
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Cookie Policy
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-white transition-colors">
-                  Licenses
-                </a>
-              </li>
-            </ul>
+            <div className="space-y-2 text-gray-400 flex flex-col">
+              <Link
+                href="/terms-of-service"
+                className="hover:text-white transition-colors"
+              >
+                Terms of Service
+              </Link>
+              <Link
+                href="/privacy-policy"
+                className="hover:text-white transition-colors"
+              >
+                Privacy Policy
+              </Link>
+            </div>
           </div>
         </div>
 
