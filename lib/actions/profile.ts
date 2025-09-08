@@ -4,6 +4,7 @@
 
 import { UserProfile } from "@/app/profile/page";
 import { createClient } from "../supabase/server";
+import { createClient as createAdminClient } from "@supabase/supabase-js";
 
 /**
  * Fetches the currently authenticated user's profile.
@@ -121,4 +122,35 @@ export async function uploadProfilePhoto(file: File) {
   } = supabase.storage.from("profile-photos").getPublicUrl(fileName);
 
   return { success: true, url: publicUrl };
+}
+
+// Deletes a user's account (auth + profile + relationships)
+export async function deleteAccount() {
+  const supabase = await createClient();
+
+  // Get the currently logged-in user
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    throw new Error("Not authenticated");
+  }
+
+  // ✅ Use admin client to delete the user (this will also sign them out)
+  const admin = createAdminClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+
+  const { error: deleteError } = await admin.auth.admin.deleteUser(user.id);
+
+  if (deleteError) {
+    console.error("Error deleting user:", deleteError);
+    throw new Error("Failed to delete account");
+  }
+
+  // ✅ Return success (deleting the user automatically signs them out)
+  return { success: true };
 }
