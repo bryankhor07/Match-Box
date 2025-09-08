@@ -4,11 +4,13 @@
 import { getCurrentUserProfile } from "@/lib/actions/profile";
 // Import server action that fetches the logged-in user's profile from Supabase.
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import Link from "next/link";
 import { calculateAge } from "../../lib/helpers/calculate-age";
 import { useAuth } from "@/contexts/auth-context"; // Custom hook for user/auth state
 import { useRouter } from "next/navigation";
+import { deleteAccount } from "@/lib/actions/profile";
+import { createClient } from "@/lib/supabase/client";
 // Utility function to calculate age from birthdate.
 
 // ----------------------
@@ -51,6 +53,8 @@ export default function ProfilePage() {
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+  const supabase = createClient(); // Create Supabase client
 
   const router = useRouter();
   const { user, loading: authLoading } = useAuth(); // Get auth state (from context)
@@ -84,6 +88,24 @@ export default function ProfilePage() {
 
     loadProfile();
   }, []);
+
+  const handleDelete = () => {
+    if (
+      confirm(
+        "Are you sure you want to delete your account? This cannot be undone."
+      )
+    ) {
+      startTransition(async () => {
+        try {
+          await deleteAccount(); // Delete account first
+          await supabase.auth.signOut(); // Then sign out on client
+        } catch (err) {
+          console.error(err);
+          alert("Failed to delete account");
+        }
+      });
+    }
+  };
 
   // ----------------------
   // Loading State UI
@@ -284,15 +306,31 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              <div className="bg-white rounded-2xl shadow-lg p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+              <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6">
+                <h3 className="text-lg font-semibold text-gray-900 tracking-wide mb-4">
                   Account
                 </h3>
+
                 <div className="space-y-3">
-                  <div className="flex items-center justify-between p-3 rounded-lg bg-gray-50">
-                    <span className="text-gray-900">Username</span>
-                    <span className="text-gray-500">@{profile.username}</span>
+                  <div className="flex items-center justify-between p-4 rounded-lg bg-gray-50">
+                    <span className="text-gray-900 capitalize">Username</span>
+                    <span className="text-gray-900 font-medium">
+                      @{profile.username}
+                    </span>
                   </div>
+                </div>
+
+                <div className="mt-6">
+                  <button
+                    onClick={handleDelete}
+                    disabled={isPending}
+                    className="w-full rounded-lg bg-red-600 px-4 py-2.5 text-sm font-semibold text-white 
+                 shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 
+                 focus:ring-red-500 focus:ring-offset-1 
+                 disabled:opacity-50 transition"
+                  >
+                    {isPending ? "Deleting..." : "Delete My Account"}
+                  </button>
                 </div>
               </div>
             </div>
