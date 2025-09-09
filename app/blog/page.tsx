@@ -287,8 +287,66 @@ export default function BlogPage() {
               <div className="space-y-8">
                 {regularPosts.map((post) => (
                   <article key={post.id} className="group">
-                    <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100/50 p-8">
-                      <div className="flex items-start space-x-6">
+                    <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg hover:shadow-xl transition-all duration-300 border border-gray-100/50 p-6 md:p-8">
+                      {/* Mobile Layout: Stacked */}
+                      <div className="md:hidden">
+                        <div className="flex items-center justify-between mb-4">
+                          <div className="text-3xl">{post.image}</div>
+                          <span className="inline-flex items-center px-3 py-1 bg-purple-100 text-purple-700 text-sm font-medium rounded-full">
+                            <Tag className="w-3 h-3 mr-1" />
+                            {post.category}
+                          </span>
+                        </div>
+
+                        <h3 className="text-xl font-bold mb-2 text-gray-800 group-hover:text-purple-600 transition-colors leading-tight">
+                          {post.title}
+                        </h3>
+
+                        <p className="text-gray-600 mb-4 leading-relaxed text-sm">
+                          {post.excerpt}
+                        </p>
+
+                        <div className="flex items-center justify-between text-xs text-gray-500 mb-4">
+                          <div className="flex items-center space-x-3">
+                            <div className="flex items-center">
+                              <Calendar className="w-3 h-3 mr-1" />
+                              {new Date(post.date).toLocaleDateString("en-US", {
+                                month: "short",
+                                day: "numeric",
+                              })}
+                            </div>
+                            <span>{post.readTime}</span>
+                            <div className="flex items-center">
+                              <User className="w-3 h-3 mr-1" />
+                              {post.author}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center space-x-4 text-xs text-gray-500">
+                            <div className="flex items-center">
+                              <Heart className="w-3 h-3 mr-1" />
+                              {post.likes}
+                            </div>
+                            <div className="flex items-center">
+                              <MessageCircle className="w-3 h-3 mr-1" />
+                              {post.comments}
+                            </div>
+                          </div>
+
+                          <Link
+                            href={`/blog/${post.id}`}
+                            className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-medium rounded-full hover:from-purple-600 hover:to-pink-600 transition-all duration-300 group text-sm"
+                          >
+                            Read Article
+                            <ArrowRight className="w-3 h-3 ml-1 group-hover:translate-x-1 transition-transform" />
+                          </Link>
+                        </div>
+                      </div>
+
+                      {/* Desktop Layout: Side by Side */}
+                      <div className="hidden md:flex items-start space-x-6">
                         <div className="text-6xl flex-shrink-0">
                           {post.image}
                         </div>
